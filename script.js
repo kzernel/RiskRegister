@@ -1,3 +1,4 @@
+console.log("🔧 script.js loaded");
 // ─── 1) Firebase Initialization ────────────────────────────────────────────────
 const firebaseConfig = {
   apiKey: "AIzaSyCI_brM58_psBt8IpYQlDCJ0u2pZO1EtAE",
@@ -11,6 +12,7 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db   = firebase.firestore();
+console.log("🔧 script.js loaded");
 // ─────────────────────────────────────────────────────────────────────────────
 
 // ─── 2) Grab DOM Elements ────────────────────────────────────────────────────
@@ -44,14 +46,24 @@ auth.onAuthStateChanged(user => {
 
 // Sign Up
 signUpBtn.addEventListener("click", () => {
+  console.log("🔧 signUpBtn clicked", emailInput.value, passInput.value);
   auth.createUserWithEmailAndPassword(emailInput.value, passInput.value)
-      .catch(e => alert("Sign-Up Error: "+e.message));
+      .then(cred => console.log("🔧 signed up", cred.user.uid))
+      .catch(e => {
+        console.error("Sign-Up failed", e);
+        alert("Sign-Up Error: " + e.message);
+      });
 });
 
 // Sign In
 signInBtn.addEventListener("click", () => {
+  console.log("🔧 signInBtn clicked", emailInput.value, passInput.value);
   auth.signInWithEmailAndPassword(emailInput.value, passInput.value)
-      .catch(e => alert("Sign-In Error: "+e.message));
+      .then(cred => console.log("🔧 signed in", cred.user.uid))
+      .catch(e => {
+        console.error("Sign-In failed", e);
+        alert("Sign-In Error: " + e.message);
+      });
 });
 
 // Sign Out

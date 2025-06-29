@@ -4,27 +4,34 @@
 
 console.log("🔧 script.js loaded");
 
-// ─── Heatmap Plugin ────────────────────────────────────────────────────────────
-const heatmapPlugin = {
-  id: 'heatmapPlugin',
+// ─── Gradient Heatmap Plugin ──────────────────────────────────────────────────
+const gradientHeatmapPlugin = {
+  id: 'gradientHeatmapPlugin',
   beforeDatasetsDraw(chart) {
-    console.log("🗺️ heatmapPlugin firing");
-    const { ctx, chartArea: { top, bottom, left, right } } = chart;
+    const {
+      ctx,
+      chartArea: { top, bottom, left, right }
+    } = chart;
+
     const cellW = (right - left) / 5;
     const cellH = (bottom - top) / 5;
+    const minScore = 1;
+    const maxScore = 25;
 
     for (let i = 0; i < 5; i++) {
       for (let j = 0; j < 5; j++) {
+        // compute score for this cell
         const prob  = i + 1;
         const imp   = 5 - j;
         const score = prob * imp;
-        let color;
 
-        if      (score >= 15) color = 'rgba(220,53,69,0.25)';
-        else if (score >=  6) color = 'rgba(255,193,7,0.25)';
-        else                   color = 'rgba(40,167,69,0.25)';
+        // normalize 0 → 1
+        const t = (score - minScore) / (maxScore - minScore);
 
-        ctx.fillStyle = color;
+        // map t=0 → green (120°), t=0.5 → yellow (60°), t=1 → red (0°)
+        const hue = (1 - t) * 120;  // 120→0 as t goes 0→1
+        ctx.fillStyle = `hsl(${hue}, 100%, 60%)`;
+
         ctx.fillRect(
           left + i * cellW,
           top  + j * cellH,
@@ -35,7 +42,8 @@ const heatmapPlugin = {
     }
   }
 };
-Chart.register(heatmapPlugin);
+Chart.unregister(heatmapPlugin);
+Chart.register(gradientHeatmapPlugin);
 // ────────────────────────────────────────────────────────────────────────────────
 
 // ─── App State & Filters ───────────────────────────────────────────────────────

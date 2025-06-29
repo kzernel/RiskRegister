@@ -55,3 +55,28 @@ tr.high {
   margin: 0 auto 20px;      /* center horizontally + bottom spacing */
 }
 /* ───────────────────────────────────────────────────────────────────────────── */
+
+/* ─── Constrain the Risk Table ─────────────────────────────────────────────── */
+table {
+  /* Stop it stretching full-width */
+  width: auto;
+  max-width: 800px;       /* you can adjust this value */
+  margin: 20px auto;      /* center it and give top/bottom space */
+  table-layout: fixed;    /* allow us to set column widths */
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 6px 8px;       /* smaller padding */
+  font-size: 14px;        /* slightly smaller text */
+  text-align: left;
+  overflow-wrap: break-word;  /* wrap long text */
+}
+
+/* Optional: explicitly size each column as a percentage of table width */
+th:nth-child(1), td:nth-child(1) { width: 20%; }  /* Title */
+th:nth-child(2), td:nth-child(2) { width: 40%; }  /* Description */
+th:nth-child(3), td:nth-child(3) { width: 15%; }  /* Probability */
+th:nth-child(4), td:nth-child(4) { width: 15%; }  /* Impact */
+th:nth-child(5), td:nth-child(5) { width: 10%; }  /* Score */
+/* ───────────────────────────────────────────────────────────────────────────── */

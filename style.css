@@ -40,6 +40,24 @@ tr.high {
 }
 /* ───────────────────────────────────────────────────────────────────── */
 
+/* ─── Make the chart-container a square for 5x5 Risk Matrix ────────────────────────────── */
+.chart-container {
+  width: 300px;          /* fixed width */
+  height: 300px;         /* same fixed height = perfect square */
+  margin: 0 auto 20px;   /* center + spacing */
+  position: relative;    /* for Chart.js responsive sizing */
+}
+
+.chart-container canvas {
+  /* fill the container completely */
+  position: absolute;
+  top: 0; left: 0;
+  width: 100% !important;
+  height: 100% !important;
+}
+/* ───────────────────────────────────────────────────────────────────────── */
+
+
 /* ── Scoped Table Styling for .table-container ───────────────────────── */
 .table-container {
   max-width: 800px;        /* cap the table width */

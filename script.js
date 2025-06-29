@@ -98,9 +98,41 @@ form.addEventListener("submit", async e => {
 // ─── 6) Render Table & Update Chart ────────────────────────────────────────────
 async function renderTable() {
   // 1) Fetch & build full list
-  const snapshot = await userRisksRef().orderBy("score", "desc").get();
+  const snapshot = await userRisksRef()
+    .orderBy("score", "desc")
+    .get();
   currentRisks = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-  // 2) Apply generic filter
-  const displayed = currentRisks.filter(risk =>
-    Object.v
+  // 2) Apply generic filter (if filterTerm is non-empty)
+  const displayed = filterTerm
+    ? currentRisks.filter(risk =>
+        Object.values(risk).some(val =>
+          String(val).toLowerCase().includes(filterTerm)
+        )
+      )
+    : currentRisks;
+
+  console.log(`📊 renderTable: showing ${displayed.length}/${currentRisks.length} risks`);
+
+  // 3) Render rows for *displayed* only
+  tableBody.innerHTML = "";
+  displayed.forEach(risk => {
+    const cls = risk.score >= 15 ? "high"
+              : risk.score >= 6  ? "medium"
+              :                     "low";
+
+    const tr = document.createElement("tr");
+    tr.classList.add(cls);
+    tr.innerHTML = `
+      <td>${risk.title}</td>
+      <td>${risk.description}</td>
+      <td>${risk.probability}</td>
+      <td>${risk.impact}</td>
+      <td>${risk.score}</td>
+    `;
+    tableBody.appendChild(tr);
+  });
+
+  // 4) Redraw the chart with the filtered set
+  updateMatrixChart(displayed);
+}

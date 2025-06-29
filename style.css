@@ -1,37 +1,49 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Risk Register</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <h1>Project Risk Register</h1>
+body {
+  font-family: sans-serif;
+  padding: 20px;
+  background: #f9f9f9;
+}
 
-  <form id="riskForm">
-    <input type="text" id="title" placeholder="Risk Title" required>
-    <input type="text" id="description" placeholder="Risk Description" required>
-    <label>Probability (1-5): <input type="number" id="probability" min="1" max="5" required></label>
-    <label>Impact (1-5): <input type="number" id="impact" min="1" max="5" required></label>
-    <button type="submit">Add Risk</button>
-  </form>
+form {
+  margin-bottom: 20px;
+}
 
-  <button id="clearRisks">Clear All Risks</button>
-  <button id="exportCSV">Export to CSV</button>
+input {
+  margin-right: 10px;
+  padding: 5px;
+}
 
-  <table>
-    <thead>
-      <tr>
-        <th>Title</th>
-        <th>Description</th>
-        <th>Probability</th>
-        <th>Impact</th>
-        <th>Score</th>
-      </tr>
-    </thead>
-    <tbody id="riskTable"></tbody>
-  </table>
+#clearRisks,
+#exportCSV {
+  margin-bottom: 20px;
+  padding: 6px 12px;
+  cursor: pointer;
+}
 
-  <script src="script.js"></script>
-</body>
-</html>
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 8px;
+  border: 1px solid #ccc;
+  text-align: left;
+}
+
+th {
+  background-color: #eee;
+}
+
+/* Color-coded rows */
+tr.low {
+  background-color: #d4edda; /* light green */
+}
+
+tr.medium {
+  background-color: #fff3cd; /* light yellow */
+}
+
+tr.high {
+  background-color: #f8d7da; /* light red */
+}

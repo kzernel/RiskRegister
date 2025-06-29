@@ -173,6 +173,25 @@ async function renderTable() {
     const textOK = !textFilter ||
       Object.values(risk).some(v => String(v).toLowerCase().includes(textFilter));
 
-    // severity filter
+      // 2) Build filtered array
+  const filtered = currentRisks.filter(function(risk) {
+    // text filter
+    const textOK = !textFilter ||
+      Object.values(risk).some(v =>
+        String(v).toLowerCase().includes(textFilter)
+      );
+
+    // severity filter (complete nested ternary!)
     const sev = (risk.score >= 15) ? "high"
-              : (risk
+              : (risk.score >=  6) ? "medium"
+              :                       "low";
+    const severityOK = !severityFilter || sev === severityFilter;
+
+    // probability filter
+    const probOK = !probFilter || String(risk.probability) === probFilter;
+
+    // impact filter
+    const impactOK = !impactFilter || String(risk.impact) === impactFilter;
+
+    return textOK && severityOK && probOK && impactOK;
+  });

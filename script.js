@@ -14,8 +14,6 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db   = firebase.firestore();
-// ──────────────────────────────────────────────────────────────────────────────
-
 
 // ─── 2) Grab DOM Elements ────────────────────────────────────────────────────
 const authContainer = document.getElementById("auth-container");
@@ -29,11 +27,9 @@ const form          = document.getElementById("riskForm");
 const tableBody     = document.getElementById("riskTable");
 const clearBtn      = document.getElementById("clearRisks");
 const exportBtn     = document.getElementById("exportCSV");
-let currentRisks    = [];  // cache for CSV + chart
-// ──────────────────────────────────────────────────────────────────────────────
+let currentRisks    = [];
 
-
-// ─── 3) Authentication Flow ───────────────────────────────────────────────────
+// ─── 3) Auth Flow ──────────────────────────────────────────────────────────────
 auth.onAuthStateChanged(user => {
   if (user) {
     authContainer.style.display = "none";
@@ -56,46 +52,35 @@ signInBtn.addEventListener("click", () => {
 });
 
 signOutBtn.addEventListener("click", () => auth.signOut());
-// ──────────────────────────────────────────────────────────────────────────────
 
-
-// ─── 4) Firestore Reference Helper ────────────────────────────────────────────
+// ─── 4) Firestore Helper ──────────────────────────────────────────────────────
 function userRisksRef() {
   return db.collection("users")
            .doc(auth.currentUser.uid)
            .collection("risks");
 }
-// ──────────────────────────────────────────────────────────────────────────────
 
-
-// ─── 5) Add a Risk ────────────────────────────────────────────────────────────
+// ─── 5) Add Risk Handler ──────────────────────────────────────────────────────
 form.addEventListener("submit", async e => {
   e.preventDefault();
-
   const title       = document.getElementById("title").value.trim();
   const description = document.getElementById("description").value.trim();
   const prob        = parseInt(document.getElementById("probability").value, 10);
   const impact      = parseInt(document.getElementById("impact").value, 10);
-  const score       = prob * impact;
 
-  // validate
   if (!title || !description || isNaN(prob) || isNaN(impact)) {
-    return alert("All fields are required, and probability/impact must be numbers.");
+    return alert("All fields are required, and Probability/Impact must be numbers.");
   }
+  const score       = prob * impact;
 
   await userRisksRef().add({ title, description, probability: prob, impact, score });
   form.reset();
   renderTable();
 });
-// ──────────────────────────────────────────────────────────────────────────────
 
-
-// ─── 6) Render Table & Update Chart ──────────────────────────────────────────
+// ─── 6) Render Table & Update Chart ────────────────────────────────────────────
 async function renderTable() {
-  const snapshot = await userRisksRef()
-    .orderBy("score", "desc")
-    .get();
-
+  const snapshot = await userRisksRef().orderBy("score", "desc").get();
   tableBody.innerHTML = "";
   currentRisks = [];
 
@@ -119,11 +104,9 @@ async function renderTable() {
     tableBody.appendChild(tr);
   });
 
-  // ←─── This call redraws your 5×5 matrix every time the table updates
+  // ← redraw the 5×5 scatter plot
   updateMatrixChart();
 }
-// ──────────────────────────────────────────────────────────────────────────────
-
 
 // ─── 7) Clear All Risks ───────────────────────────────────────────────────────
 clearBtn.addEventListener("click", async () => {
@@ -134,8 +117,6 @@ clearBtn.addEventListener("click", async () => {
   await batch.commit();
   renderTable();
 });
-// ──────────────────────────────────────────────────────────────────────────────
-
 
 // ─── 8) Export to CSV ─────────────────────────────────────────────────────────
 exportBtn.addEventListener("click", () => {
@@ -143,8 +124,8 @@ exportBtn.addEventListener("click", () => {
 
   const header = ["Title","Description","Probability","Impact","Score"];
   const rows   = currentRisks.map(r => [r.title, r.description, r.probability, r.impact, r.score]);
-  const csv    = "data:text/csv;charset=utf-8,"
-               + [header, ...rows].map(r => r.join(",")).join("\n");
+  const csv    = "data:text/csv;charset=utf-8," +
+                 [header, ...rows].map(r => r.join(",")).join("\n");
 
   const link = document.createElement("a");
   link.href     = encodeURI(csv);
@@ -153,8 +134,6 @@ exportBtn.addEventListener("click", () => {
   link.click();
   document.body.removeChild(link);
 });
-// ──────────────────────────────────────────────────────────────────────────────
-
 
 // ─── 9) 5×5 Risk Matrix Scatter Plot Helper ──────────────────────────────────
 function updateMatrixChart() {
@@ -171,16 +150,10 @@ function updateMatrixChart() {
     data: { datasets: [{ data: dataPoints, pointRadius: 8 }] },
     options: {
       scales: {
-        x: {
-          title: { display: true, text: 'Probability' },
-          min: 1, max: 5, ticks: { stepSize: 1 }, grid: { color: '#eee' }
-        },
-        y: {
-          title: { display: true, text: 'Impact' },
-          min: 1, max: 5, ticks: { stepSize: 1 }, grid: { color: '#eee' }
-        }
+        x: { title: { display: true, text: 'Probability' }, min:1, max:5, ticks:{stepSize:1}, grid:{color:'#eee'} },
+        y: { title: { display: true, text: 'Impact'      }, min:1, max:5, ticks:{stepSize:1}, grid:{color:'#eee'} }
       },
-      plugins: { legend: { display: false } }
+      plugins: { legend:{ display:false } }
     }
   };
 
@@ -192,4 +165,3 @@ function updateMatrixChart() {
     matrixChart = new Chart(ctx, cfg);
   }
 }
-// ──────────────────────────────────────────────────────────────────────────────

@@ -107,6 +107,7 @@ auth.onAuthStateChanged(function(user) {
   }
 });
 
+// ─── Sign Up ─────────────────────────────────────────────────────────────────
 signUpBtn.addEventListener("click", function() {
   auth
     .createUserWithEmailAndPassword(emailInput.value, passInput.value)
@@ -115,6 +116,7 @@ signUpBtn.addEventListener("click", function() {
     });
 });
 
+// ─── Sign In ─────────────────────────────────────────────────────────────────
 signInBtn.addEventListener("click", function() {
   auth
     .signInWithEmailAndPassword(emailInput.value, passInput.value)

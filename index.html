@@ -3,35 +3,51 @@
 <head>
   <meta charset="UTF-8">
   <title>Risk Register</title>
+
+  <!-- load the Firebase compat SDKs BEFORE your script.js -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <h1>Project Risk Register</h1>
 
-  <form id="riskForm">
-    <input type="text" id="title" placeholder="Risk Title" required>
-    <input type="text" id="description" placeholder="Risk Description" required>
-    <label>Probability (1-5): <input type="number" id="probability" min="1" max="5" required></label>
-    <label>Impact (1-5): <input type="number" id="impact" min="1" max="5" required></label>
-    <button type="submit">Add Risk</button>
-  </form>
+  <!-- 1) Auth UI (shown when NOT signed in) -->
+  <div id="auth-container">
+    <input type="email"    id="email"    placeholder="Email" />
+    <input type="password" id="password" placeholder="Password" />
+    <button id="signUpBtn">Sign Up</button>
+    <button id="signInBtn">Sign In</button>
+  </div>
 
-  <button id="clearRisks">Clear All Risks</button>
-  <button id="exportCSV">Export to CSV</button>
+  <!-- 2) App UI (hidden until signed in) -->
+  <div id="app-container" style="display:none;">
+    <button id="signOutBtn">Sign Out</button>
 
-  <table>
-    <thead>
-      <tr>
-        <th>Title</th>
-        <th>Description</th>
-        <th>Probability</th>
-        <th>Impact</th>
-        <th>Score</th>
-      </tr>
-    </thead>
-    <tbody id="riskTable"></tbody>
-  </table>
+    <form id="riskForm">
+      <input type="text"  id="title"       placeholder="Risk Title"       required>
+      <input type="text"  id="description" placeholder="Risk Description" required>
+      <label>Probability: <input type="number" id="probability" min="1" max="5" required></label>
+      <label>Impact:      <input type="number" id="impact"      min="1" max="5" required></label>
+      <button type="submit">Add Risk</button>
+    </form>
 
+    <button id="clearRisks">Clear All Risks</button>
+    <button id="exportCSV">Export to CSV</button>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Title</th><th>Description</th><th>Probability</th><th>Impact</th><th>Score</th>
+        </tr>
+      </thead>
+      <tbody id="riskTable"></tbody>
+    </table>
+  </div>
+
+  <!-- your multi-user script -->
   <script src="script.js"></script>
 </body>
 </html>

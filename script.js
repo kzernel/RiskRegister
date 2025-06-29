@@ -149,6 +149,8 @@ function updateMatrixChart() {
     type: 'scatter',
     data: { datasets: [{ data: dataPoints, pointRadius: 8 }] },
     options: {
+      responsive: true,            // ← enable responsive mode
+      maintainAspectRatio: false,  // ← fill the container’s exact shape
       scales: {
         x: { title: { display: true, text: 'Probability' }, min:1, max:5, ticks:{stepSize:1}, grid:{color:'#eee'} },
         y: { title: { display: true, text: 'Impact'      }, min:1, max:5, ticks:{stepSize:1}, grid:{color:'#eee'} }

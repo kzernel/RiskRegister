@@ -47,3 +47,11 @@ tr.medium {
 tr.high {
   background-color: #f8d7da; /* light red */
 }
+/* ─── Constrain the Risk Matrix size ───────────────────────────────────────── */
+#riskMatrix {
+  display: block;           /* treat like a block so margin auto centers */
+  width: 300px;             /* fixed display width */
+  height: 300px;            /* fixed display height */
+  margin: 0 auto 20px;      /* center horizontally + bottom spacing */
+}
+/* ───────────────────────────────────────────────────────────────────────────── */

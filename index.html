@@ -4,21 +4,20 @@
   <meta charset="UTF-8">
   <title>Risk Register</title>
 
-  <!-- load the Firebase compat SDKs script.js -->
+  <!-- Firebase compat SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
-  <link rel="stylesheet" href="style.css">
-  
-  <!-- Chart.js CDN -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <h1>Project Risk Register</h1>
 
-  <!-- 1) Auth UI (shown when NOT signed in) -->
+  <!-- 1) Auth UI -->
   <div id="auth-container">
     <input type="email"    id="email"    placeholder="Email" />
     <input type="password" id="password" placeholder="Password" />
@@ -26,7 +25,7 @@
     <button id="signInBtn">Sign In</button>
   </div>
 
-  <!-- 2) App UI (hidden until signed in) -->
+  <!-- 2) App UI -->
   <div id="app-container" style="display:none;">
     <button id="signOutBtn">Sign Out</button>
 
@@ -40,29 +39,27 @@
 
     <button id="clearRisks">Clear All Risks</button>
     <button id="exportCSV">Export to CSV</button>
-    <button id="exportCSV">Export to CSV</button>
 
-  <!-- Risk Matrix Scatter Plot -->
-  <canvas id="riskMatrix" width="400" height="400"
-          style="max-width:100%; margin-bottom:20px;"></canvas>
+    <!-- Risk Matrix Scatter Plot -->
+    <canvas id="riskMatrix" width="400" height="400"
+            style="max-width:100%; margin-bottom:20px;"></canvas>
 
-  <!-- existing table -->
-  <table> … </table>
-
-  <script src="script.js"></script>
-
-
+    <!-- Risk Table -->
     <table>
       <thead>
         <tr>
-          <th>Title</th><th>Description</th><th>Probability</th><th>Impact</th><th>Score</th>
+          <th>Title</th>
+          <th>Description</th>
+          <th>Probability</th>
+          <th>Impact</th>
+          <th>Score</th>
         </tr>
       </thead>
       <tbody id="riskTable"></tbody>
     </table>
   </div>
 
-  <!-- multi-user script -->
+  <!-- Your multi-user + chart script -->
   <script src="script.js"></script>
 </body>
 </html>

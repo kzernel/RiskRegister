@@ -1,5 +1,6 @@
 console.log("🔧 script.js loaded");
 let matrixChart = null;
+
 // ─── 1) Firebase Initialization ────────────────────────────────────────────────
 const firebaseConfig = {
   apiKey: "AIzaSyCI_brM58_psBt8IpYQlDCJ0u2pZO1EtAE",
@@ -13,8 +14,8 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db   = firebase.firestore();
-console.log("🔧 script.js loaded");
-// ─────────────────────────────────────────────────────────────────────────────
+// ──────────────────────────────────────────────────────────────────────────────
+
 
 // ─── 2) Grab DOM Elements ────────────────────────────────────────────────────
 const authContainer = document.getElementById("auth-container");
@@ -28,56 +29,46 @@ const form          = document.getElementById("riskForm");
 const tableBody     = document.getElementById("riskTable");
 const clearBtn      = document.getElementById("clearRisks");
 const exportBtn     = document.getElementById("exportCSV");
+let currentRisks    = [];  // cache for CSV + chart
+// ──────────────────────────────────────────────────────────────────────────────
 
-let currentRisks = [];  // cache for CSV export
 
 // ─── 3) Authentication Flow ───────────────────────────────────────────────────
 auth.onAuthStateChanged(user => {
   if (user) {
-    // Show the app, hide auth
     authContainer.style.display = "none";
     appContainer.style.display  = "block";
     renderTable();
   } else {
-    // Show auth, hide app
     authContainer.style.display = "block";
     appContainer.style.display  = "none";
   }
 });
 
-// Sign Up
 signUpBtn.addEventListener("click", () => {
-  console.log("🔧 signUpBtn clicked", emailInput.value, passInput.value);
   auth.createUserWithEmailAndPassword(emailInput.value, passInput.value)
-      .then(cred => console.log("🔧 signed up", cred.user.uid))
-      .catch(e => {
-        console.error("Sign-Up failed", e);
-        alert("Sign-Up Error: " + e.message);
-      });
+      .catch(e => alert("Sign-Up Error: " + e.message));
 });
 
-// Sign In
 signInBtn.addEventListener("click", () => {
-  console.log("🔧 signInBtn clicked", emailInput.value, passInput.value);
   auth.signInWithEmailAndPassword(emailInput.value, passInput.value)
-      .then(cred => console.log("🔧 signed in", cred.user.uid))
-      .catch(e => {
-        console.error("Sign-In failed", e);
-        alert("Sign-In Error: " + e.message);
-      });
+      .catch(e => alert("Sign-In Error: " + e.message));
 });
 
-// Sign Out
 signOutBtn.addEventListener("click", () => auth.signOut());
+// ──────────────────────────────────────────────────────────────────────────────
 
-// ─── 4) Firestore Helpers ────────────────────────────────────────────────────
+
+// ─── 4) Firestore Reference Helper ────────────────────────────────────────────
 function userRisksRef() {
   return db.collection("users")
            .doc(auth.currentUser.uid)
            .collection("risks");
 }
+// ──────────────────────────────────────────────────────────────────────────────
 
-// ─── 5) Add a Risk ───────────────────────────────────────────────────────────
+
+// ─── 5) Add a Risk ────────────────────────────────────────────────────────────
 form.addEventListener("submit", async e => {
   e.preventDefault();
   const title       = form.title.value;
@@ -90,8 +81,10 @@ form.addEventListener("submit", async e => {
   form.reset();
   renderTable();
 });
+// ──────────────────────────────────────────────────────────────────────────────
 
-// ─── 6) Render Table with Color Coding ───────────────────────────────────────
+
+// ─── 6) Render Table & Update Chart ──────────────────────────────────────────
 async function renderTable() {
   const snapshot = await userRisksRef()
     .orderBy("score", "desc")
@@ -119,10 +112,14 @@ async function renderTable() {
     `;
     tableBody.appendChild(tr);
   });
-    updateMatrixChart();
-}
 
-// ─── 7) Clear All Risks ──────────────────────────────────────────────────────
+  // ←─── This call redraws your 5×5 matrix every time the table updates
+  updateMatrixChart();
+}
+// ──────────────────────────────────────────────────────────────────────────────
+
+
+// ─── 7) Clear All Risks ───────────────────────────────────────────────────────
 clearBtn.addEventListener("click", async () => {
   if (!confirm("Delete ALL your risks?")) return;
   const snapshot = await userRisksRef().get();
@@ -131,18 +128,17 @@ clearBtn.addEventListener("click", async () => {
   await batch.commit();
   renderTable();
 });
+// ──────────────────────────────────────────────────────────────────────────────
+
 
 // ─── 8) Export to CSV ─────────────────────────────────────────────────────────
 exportBtn.addEventListener("click", () => {
-  if (currentRisks.length === 0) {
-    return alert("No risks to export.");
-  }
+  if (currentRisks.length === 0) return alert("No risks to export.");
 
   const header = ["Title","Description","Probability","Impact","Score"];
   const rows   = currentRisks.map(r => [r.title, r.description, r.probability, r.impact, r.score]);
-
-  const csv = "data:text/csv;charset=utf-8," 
-            + [header, ...rows].map(r => r.join(",")).join("\n");
+  const csv    = "data:text/csv;charset=utf-8,"
+               + [header, ...rows].map(r => r.join(",")).join("\n");
 
   const link = document.createElement("a");
   link.href     = encodeURI(csv);
@@ -151,8 +147,10 @@ exportBtn.addEventListener("click", () => {
   link.click();
   document.body.removeChild(link);
 });
-``
-// ─── 9) Update the 5×5 Risk Matrix Scatter Plot
+// ──────────────────────────────────────────────────────────────────────────────
+
+
+// ─── 9) 5×5 Risk Matrix Scatter Plot Helper ──────────────────────────────────
 function updateMatrixChart() {
   const dataPoints = currentRisks.map(risk => {
     let color;
@@ -169,13 +167,11 @@ function updateMatrixChart() {
       scales: {
         x: {
           title: { display: true, text: 'Probability' },
-          min: 1, max: 5, ticks: { stepSize: 1 },
-          grid: { color: '#eee' }
+          min: 1, max: 5, ticks: { stepSize: 1 }, grid: { color: '#eee' }
         },
         y: {
           title: { display: true, text: 'Impact' },
-          min: 1, max: 5, ticks: { stepSize: 1 },
-          grid: { color: '#eee' }
+          min: 1, max: 5, ticks: { stepSize: 1 }, grid: { color: '#eee' }
         }
       },
       plugins: { legend: { display: false } }
@@ -190,4 +186,4 @@ function updateMatrixChart() {
     matrixChart = new Chart(ctx, cfg);
   }
 }
-
+// ──────────────────────────────────────────────────────────────────────────────

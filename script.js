@@ -1,4 +1,5 @@
 console.log("🔧 script.js loaded");
+let matrixChart = null;
 // ─── 1) Firebase Initialization ────────────────────────────────────────────────
 const firebaseConfig = {
   apiKey: "AIzaSyCI_brM58_psBt8IpYQlDCJ0u2pZO1EtAE",
@@ -118,6 +119,7 @@ async function renderTable() {
     `;
     tableBody.appendChild(tr);
   });
+    updateMatrixChart();
 }
 
 // ─── 7) Clear All Risks ──────────────────────────────────────────────────────
@@ -150,4 +152,42 @@ exportBtn.addEventListener("click", () => {
   document.body.removeChild(link);
 });
 ``
+// ─── 9) Update the 5×5 Risk Matrix Scatter Plot
+function updateMatrixChart() {
+  const dataPoints = currentRisks.map(risk => {
+    let color;
+    if (risk.score >= 15)      color = 'rgba(220,53,69,0.8)';
+    else if (risk.score >= 6)  color = 'rgba(255,193,7,0.8)';
+    else                        color = 'rgba(40,167,69,0.8)';
+    return { x: risk.probability, y: risk.impact, backgroundColor: color };
+  });
+
+  const cfg = {
+    type: 'scatter',
+    data: { datasets: [{ data: dataPoints, pointRadius: 8 }] },
+    options: {
+      scales: {
+        x: {
+          title: { display: true, text: 'Probability' },
+          min: 1, max: 5, ticks: { stepSize: 1 },
+          grid: { color: '#eee' }
+        },
+        y: {
+          title: { display: true, text: 'Impact' },
+          min: 1, max: 5, ticks: { stepSize: 1 },
+          grid: { color: '#eee' }
+        }
+      },
+      plugins: { legend: { display: false } }
+    }
+  };
+
+  const ctx = document.getElementById('riskMatrix').getContext('2d');
+  if (matrixChart) {
+    matrixChart.data.datasets[0].data = dataPoints;
+    matrixChart.update();
+  } else {
+    matrixChart = new Chart(ctx, cfg);
+  }
+}
 

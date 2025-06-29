@@ -71,11 +71,17 @@ function userRisksRef() {
 // ─── 5) Add a Risk ────────────────────────────────────────────────────────────
 form.addEventListener("submit", async e => {
   e.preventDefault();
-  const title       = form.title.value;
-  const description = form.description.value;
-  const prob        = parseInt(form.probability.value, 10);
-  const impact      = parseInt(form.impact.value, 10);
+
+  const title       = document.getElementById("title").value.trim();
+  const description = document.getElementById("description").value.trim();
+  const prob        = parseInt(document.getElementById("probability").value, 10);
+  const impact      = parseInt(document.getElementById("impact").value, 10);
   const score       = prob * impact;
+
+  // validate
+  if (!title || !description || isNaN(prob) || isNaN(impact)) {
+    return alert("All fields are required, and probability/impact must be numbers.");
+  }
 
   await userRisksRef().add({ title, description, probability: prob, impact, score });
   form.reset();

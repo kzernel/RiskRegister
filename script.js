@@ -108,13 +108,19 @@ auth.onAuthStateChanged(function(user) {
 });
 
 signUpBtn.addEventListener("click", function() {
-  auth.createUserWithEmailAndPassword(emailInput.value, passInput.value)
-      .catch(function(e) { alert("Sign-Up Error: " + e.message); });
+  auth
+    .createUserWithEmailAndPassword(emailInput.value, passInput.value)
+    .catch(function(e) {
+      alert("Sign-Up Error: " + e.message);
+    });
 });
 
 signInBtn.addEventListener("click", function() {
-  auth.signInWithEmailAndPassword(emailInput.value, passInput.value)
-      .catch(function(e) { alert("Sign-In Error: " + e.message); });
+  auth
+    .signInWithEmailAndPassword(emailInput.value, passInput.value)
+    .catch(function(e) {
+      alert("Sign-In Error: " + e.message);
+    });
 });
 
 signOutBtn.addEventListener("click", function() {

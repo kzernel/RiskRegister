@@ -54,6 +54,51 @@
     <!-- Risk Table (wrapped for scoped styling) -->
     <label for="filterInput">Search / Filter:</label>
 <input type="text" id="filterInput" placeholder="Type to filter risks…" style="margin-bottom:20px; width:100%; max-width:300px;">
+     <!-- Column-specific filters -->
+  <div id="column-filters" style="margin-bottom:20px; display:flex; gap:10px; flex-wrap:wrap;">
+    <!-- Text search (already present) -->
+    <label>
+      🔍 Search:
+      <input type="text" id="filterInput" placeholder="Type to filter risks…" />
+    </label>
+
+    <!-- Severity filter -->
+    <label>
+      🚦 Severity:
+      <select id="severityFilter">
+        <option value="">All</option>
+        <option value="low">Low</option>
+        <option value="medium">Medium</option>
+        <option value="high">High</option>
+      </select>
+    </label>
+
+    <!-- Probability filter -->
+    <label>
+      🎲 Probability:
+      <select id="probFilter">
+        <option value="">All</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+      </select>
+    </label>
+
+    <!-- Impact filter -->
+    <label>
+      💥 Impact:
+      <select id="impactFilter">
+        <option value="">All</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+      </select>
+    </label>
+  </div>
     <div class="table-container">
       <table>
         <thead>

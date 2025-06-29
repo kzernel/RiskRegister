@@ -108,21 +108,29 @@ auth.onAuthStateChanged(function(user) {
 });
 
 // ─── Sign Up ─────────────────────────────────────────────────────────────────
-signUpBtn.addEventListener("click", function() {
-  auth
-    .createUserWithEmailAndPassword(emailInput.value, passInput.value)
-    .catch(function(e) {
-      alert("Sign-Up Error: " + e.message);
-    });
+signUpBtn.addEventListener("click", async function() {
+  try {
+    await auth.createUserWithEmailAndPassword(
+      emailInput.value,
+      passInput.value
+    );
+    // you could console.log("Signed up!") here if you like
+  } catch (e) {
+    alert("Sign-Up Error: " + e.message);
+  }
 });
 
 // ─── Sign In ─────────────────────────────────────────────────────────────────
-signInBtn.addEventListener("click", function() {
-  auth
-    .signInWithEmailAndPassword(emailInput.value, passInput.value)
-    .catch(function(e) {
-      alert("Sign-In Error: " + e.message);
-    });
+signInBtn.addEventListener("click", async function() {
+  try {
+    await auth.signInWithEmailAndPassword(
+      emailInput.value,
+      passInput.value
+    );
+    // console.log("Signed in!");
+  } catch (e) {
+    alert("Sign-In Error: " + e.message);
+  }
 });
 
 signOutBtn.addEventListener("click", function() {

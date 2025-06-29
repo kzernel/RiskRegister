@@ -1,5 +1,5 @@
 // ────────────────────────────────────────────────────────────────────────────────
-// script.js: Risk Register with Multi-User, Filter & 5×5 Scatter Plot
+// script.js: Risk Register with Multi-User, Generic Filter & 5×5 Scatter Plot
 // ────────────────────────────────────────────────────────────────────────────────
 
 console.log("🔧 script.js loaded");
@@ -36,14 +36,15 @@ const tableBody     = document.getElementById("riskTable");
 const clearBtn      = document.getElementById("clearRisks");
 const exportBtn     = document.getElementById("exportCSV");
 
-if (!filterInput) {
-  console.error("⚠️ filterInput element not found! Did you add `<input id=\"filterInput\">` in your HTML?");
-} else {
+console.log("🔧 filterInput =", filterInput);
+if (filterInput) {
   filterInput.addEventListener("input", e => {
     filterTerm = e.target.value.trim().toLowerCase();
     console.log("🔍 filterTerm =", filterTerm);
     renderTable();
   });
+} else {
+  console.error("⚠️ filterInput element not found—check your HTML!");
 }
 
 // ─── 3) Authentication Flow ───────────────────────────────────────────────────
@@ -82,8 +83,8 @@ form.addEventListener("submit", async e => {
   e.preventDefault();
   const title       = document.getElementById("title").value.trim();
   const description = document.getElementById("description").value.trim();
-  const prob        = parseInt(document.getElementById("probability").value,  10);
-  const impact      = parseInt(document.getElementById("impact").value,       10);
+  const prob        = parseInt(document.getElementById("probability").value, 10);
+  const impact      = parseInt(document.getElementById("impact").value, 10);
 
   if (!title || !description || isNaN(prob) || isNaN(impact)) {
     return alert("All fields are required, and Probability/Impact must be numbers.");
@@ -115,22 +116,4 @@ async function renderTable() {
   // 3) Render rows for *displayed* only
   tableBody.innerHTML = "";
   displayed.forEach(risk => {
-    const cls = risk.score >= 15 ? "high"
-              : risk.score >= 6  ? "medium"
-              :                     "low";
-
-    const tr = document.createElement("tr");
-    tr.classList.add(cls);
-    tr.innerHTML = `
-      <td>${risk.title}</td>
-      <td>${risk.description}</td>
-      <td>${risk.probability}</td>
-      <td>${risk.impact}</td>
-      <td>${risk.score}</td>
-    `;
-    tableBody.appendChild(tr);
-  });
-
-  // 4) Redraw the chart with the filtered set
-  updateMatrixChart(displayed);
-}
+    c

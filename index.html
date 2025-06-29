@@ -12,12 +12,13 @@
   <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+  <!-- Your custom styles -->
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <h1>Project Risk Register</h1>
 
-  <!-- 1) Auth UI -->
+  <!-- 1) Auth UI (shown when NOT signed in) -->
   <div id="auth-container">
     <input type="email"    id="email"    placeholder="Email" />
     <input type="password" id="password" placeholder="Password" />
@@ -29,75 +30,71 @@
   <div id="app-container" style="display:none;">
     <button id="signOutBtn">Sign Out</button>
 
+    <!-- Add a new risk -->
     <form id="riskForm">
       <input type="text"  id="title"       placeholder="Risk Title"       required>
       <input type="text"  id="description" placeholder="Risk Description" required>
-      <label>
-        Probability: 
-        <input type="number" id="probability" min="1" max="5" required>
-      </label>
-      <label>
-        Impact:      
-        <input type="number" id="impact"      min="1" max="5" required>
-      </label>
+      <label>Probability: <input type="number" id="probability" min="1" max="5" required></label>
+      <label>Impact:      <input type="number" id="impact"      min="1" max="5" required></label>
       <button type="submit">Add Risk</button>
     </form>
 
+    <!-- Clear & Export -->
     <button id="clearRisks">Clear All Risks</button>
     <button id="exportCSV">Export to CSV</button>
 
-    <!-- Risk Matrix Scatter Plot -->
-   <div class="chart-container">
-  <canvas id="riskMatrix"></canvas>
-</div>
+    <!-- 5×5 Risk Matrix Scatter Plot -->
+    <div class="chart-container">
+      <canvas id="riskMatrix"></canvas>
+    </div>
 
-    <!-- Risk Table (wrapped for scoped styling) -->
-    <label for="filterInput">Search / Filter:</label>
-<input type="text" id="filterInput" placeholder="Type to filter risks…" style="margin-bottom:20px; width:100%; max-width:300px;">
-    
-    <!-- Text search (already present) -->
-    <label>
-      🔍 Search:
-      <input type="text" id="filterInput" placeholder="Type to filter risks…" />
-    </label>
+    <!-- Column‐specific and text filters -->
+    <div id="column-filters" style="margin:20px 0; display:flex; gap:12px; flex-wrap:wrap; align-items:center;">
+      <!-- Text search -->
+      <label>
+        🔍 Search:
+        <input type="text" id="filterInput" placeholder="Type to filter risks…" />
+      </label>
 
-    <!-- Severity filter -->
-    <label>
-      🚦 Severity:
-      <select id="severityFilter">
-        <option value="">All</option>
-        <option value="low">Low</option>
-        <option value="medium">Medium</option>
-        <option value="high">High</option>
-      </select>
-    </label>
+      <!-- Severity -->
+      <label>
+        🚦 Severity:
+        <select id="severityFilter">
+          <option value="">All</option>
+          <option value="low">Low</option>
+          <option value="medium">Medium</option>
+          <option value="high">High</option>
+        </select>
+      </label>
 
-    <!-- Probability filter -->
-    <label>
-      🎲 Probability:
-      <select id="probFilter">
-        <option value="">All</option>
-        <option value="1">1</option>
-        <option value="2">2</option>
-        <option value="3">3</option>
-        <option value="4">4</option>
-        <option value="5">5</option>
-      </select>
-    </label>
+      <!-- Probability -->
+      <label>
+        🎲 Probability:
+        <select id="probFilter">
+          <option value="">All</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+        </select>
+      </label>
 
-    <!-- Impact filter -->
-    <label>
-      💥 Impact:
-      <select id="impactFilter">
-        <option value="">All</option>
-        <option value="1">1</option>
-        <option value="2">2</option>
-        <option value="3">3</option>
-        <option value="4">4</option>
-        <option value="5">5</option>
-      </select>
-    </label>
-  </div>
+      <!-- Impact -->
+      <label>
+        💥 Impact:
+        <select id="impactFilter">
+          <option value="">All</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+        </select>
+      </label>
+    </div>
+
+    <!-- Risk Table -->
     <div class="table-container">
       <table>
         <thead>
@@ -112,11 +109,9 @@
         <tbody id="riskTable"></tbody>
       </table>
     </div>
-  </div><!-- /#app-container -->
+  </div>
 
-  <!-- Your multi-user + chart script -->
+  <!-- Your script (multi-user, filters, chart) -->
   <script src="script.js"></script>
 </body>
 </html>
-
-

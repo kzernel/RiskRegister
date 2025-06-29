@@ -3,6 +3,42 @@
 // ────────────────────────────────────────────────────────────────────────────────
 
 console.log("🔧 script.js loaded");
+// ─── Heatmap Plugin ────────────────────────────────────────────────────────────
+const heatmapPlugin = {
+  id: 'heatmapPlugin',
+  beforeDatasetsDraw(chart) {
+    const {
+      ctx,
+      chartArea: { top, bottom, left, right }
+    } = chart;
+    const cellW = (right - left) / 5;
+    const cellH = (bottom - top) / 5;
+
+    for (let i = 0; i < 5; i++) {
+      for (let j = 0; j < 5; j++) {
+        const prob  = i + 1;
+        const imp   = 5 - j;
+        const score = prob * imp;
+        let color;
+
+        if (score >= 15)      color = 'rgba(220,53,69,0.25)';  // red
+        else if (score >= 6)  color = 'rgba(255,193,7,0.25)';  // yellow
+        else                  color = 'rgba(40,167,69,0.25)';  // green
+
+        ctx.fillStyle = color;
+        ctx.fillRect(
+          left + i * cellW,
+          top  + j * cellH,
+          cellW,
+          cellH
+        );
+      }
+    }
+  }
+};
+// register it with Chart.js
+Chart.register(heatmapPlugin);
+// ────────────────────────────────────────────────────────────────────────────────
 
 let matrixChart    = null;
 let currentRisks   = [];  // full Firestore list
@@ -195,19 +231,42 @@ function updateMatrixChart(risksToPlot = currentRisks) {
     return { x:r.probability, y:r.impact, backgroundColor:color };
   });
 
-  const cfg = {
-    type:"scatter",
-    data:{ datasets:[{ data:dataPoints, pointRadius:5 }] },
-    options:{
-      responsive:true,
-      maintainAspectRatio:false,
-      scales:{
-        x:{ title:{display:true,text:"Probability"}, min:1, max:5, ticks:{stepSize:1}, grid:{color:"#eee"} },
-        y:{ title:{display:true,text:"Impact"     }, min:1, max:5, ticks:{stepSize:1}, grid:{color:"#eee"} }
+ const cfg = {
+  type: "scatter",
+  data: {
+    datasets: [
+      {
+        data: dataPoints,
+        pointRadius: 5
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      x: {
+        title: { display: true, text: "Probability" },
+        min: 1, max: 5,
+        ticks: { stepSize: 1 },
+        grid: { color: "#eee" }
       },
-      plugins:{legend:{display:false}}
+      y: {
+        title: { display: true, text: "Impact" },
+        min: 1, max: 5,
+        ticks: { stepSize: 1 },
+        grid: { color: "#eee" }
+      }
+    },
+    plugins: {
+      legend: { display: false }
     }
-  };
+  },
+  plugins: [
+    'heatmapPlugin'
+  ]
+};
+
 
   const ctx = document.getElementById("riskMatrix").getContext("2d");
   if (matrixChart) {

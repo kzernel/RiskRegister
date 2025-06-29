@@ -104,12 +104,12 @@ form.addEventListener("submit", async (e) => {
 async function renderTable() {
   // 1) Fetch & build full list
   const snapshot = await userRisksRef().orderBy("score", "desc").get();
-  currentRisks   = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+  currentRisks   = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
   // 2) Apply generic filter (if filterTerm is non-empty)
   const displayed = filterTerm
-    ? currentRisks.filter((risk) =>
-        Object.values(risk).some((val) =>
+    ? currentRisks.filter(risk =>
+        Object.values(risk).some(val =>
           String(val).toLowerCase().includes(filterTerm)
         )
       )
@@ -119,9 +119,12 @@ async function renderTable() {
 
   // 3) Render rows for *displayed* only
   tableBody.innerHTML = "";
-  displayed.forEach((risk) => {
-    const cls = risk.score >= 15 ? "high" : risk.score >= 6 ? "medium" : "low";
-    const tr  = document.createElement("tr");
+  displayed.forEach(risk => {
+    const cls = risk.score >= 15 ? "high"
+              : risk.score >= 6  ? "medium"
+              :                     "low";
+
+    const tr = document.createElement("tr");
     tr.classList.add(cls);
     tr.innerHTML = `
       <td>${risk.title}</td>
@@ -135,7 +138,8 @@ async function renderTable() {
 
   // 4) Redraw the chart with the filtered set
   updateMatrixChart(displayed);
-}
+} 
+
 
 // ─── 7) Clear All Risks ───────────────────────────────────────────────────────
 clearBtn.addEventListener("click", async () => {

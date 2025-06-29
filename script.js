@@ -1,12 +1,12 @@
 // ────────────────────────────────────────────────────────────────────────────────
-// script.js: Risk Register with Multi‐User Auth, Live Filter & 5×5 Scatter Plot
+// script.js: Risk Register with Multi-User Auth, Live Filter & 5×5 Scatter Plot
 // ────────────────────────────────────────────────────────────────────────────────
 
 console.log("🔧 script.js loaded");
 
-let matrixChart = null;
-let currentRisks = [];  // full unfiltered list
-let filterTerm = "";    // current filter string
+let matrixChart    = null;
+let currentRisks   = [];   // full unfiltered list
+let filterTerm     = "";   // current filter string
 
 // ─── 1) Firebase Initialization ────────────────────────────────────────────────
 const firebaseConfig = {
@@ -44,7 +44,7 @@ if (filterInput) {
     renderTable();
   });
 } else {
-  console.error("⚠️ filterInput element not found! Ensure HTML has `<input id=\"filterInput\">`.");
+  console.error("⚠️ filterInput element not found! Add `<input id=\"filterInput\">` in your HTML.");
 }
 
 // ─── 3) Authentication Flow ───────────────────────────────────────────────────
@@ -84,10 +84,11 @@ function userRisksRef() {
 // ─── 5) Add Risk Handler ──────────────────────────────────────────────────────
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
+
   const title       = document.getElementById("title").value.trim();
   const description = document.getElementById("description").value.trim();
-  const prob        = parseInt(document.getElementById("probability").value,  10);
-  const impact      = parseInt(document.getElementById("impact").value,       10);
+  const prob        = parseInt(document.getElementById("probability").value, 10);
+  const impact      = parseInt(document.getElementById("impact").value,      10);
 
   if (!title || !description || isNaN(prob) || isNaN(impact)) {
     return alert("All fields are required, and Probability/Impact must be numbers.");
@@ -105,7 +106,7 @@ async function renderTable() {
   const snapshot = await userRisksRef().orderBy("score", "desc").get();
   currentRisks   = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
 
-  // 2) Apply generic filter if needed
+  // 2) Apply generic filter (if filterTerm is non-empty)
   const displayed = filterTerm
     ? currentRisks.filter((risk) =>
         Object.values(risk).some((val) =>
@@ -116,7 +117,7 @@ async function renderTable() {
 
   console.log(`📊 renderTable: showing ${displayed.length}/${currentRisks.length} risks`);
 
-  // 3) Render rows
+  // 3) Render rows for *displayed* only
   tableBody.innerHTML = "";
   displayed.forEach((risk) => {
     const cls = risk.score >= 15 ? "high" : risk.score >= 6 ? "medium" : "low";
@@ -154,8 +155,8 @@ exportBtn.addEventListener("click", () => {
   const rows   = currentRisks.map((r) => [
     r.title, r.description, r.probability, r.impact, r.score
   ]);
-  const csv    =
-    "data:text/csv;charset=utf-8," + [header, ...rows].map((r) => r.join(",")).join("\n");
+  const csv    = "data:text/csv;charset=utf-8," +
+                 [header, ...rows].map((r) => r.join(",")).join("\n");
 
   const link = document.createElement("a");
   link.href     = encodeURI(csv);
@@ -169,25 +170,37 @@ exportBtn.addEventListener("click", () => {
 function updateMatrixChart(risksToPlot = currentRisks) {
   const dataPoints = risksToPlot.map((risk) => {
     let color;
-    if (risk.score >= 15)      color = 'rgba(220,53,69,0.8)';
-    else if (risk.score >= 6)  color = 'rgba(255,193,7,0.8)';
-    else                        color = 'rgba(40,167,69,0.8)';
+    if (risk.score >= 15)      color = "rgba(220,53,69,0.8)";
+    else if (risk.score >= 6)  color = "rgba(255,193,7,0.8)";
+    else                        color = "rgba(40,167,69,0.8)";
     return { x: risk.probability, y: risk.impact, backgroundColor: color };
   });
 
   const cfg = {
-    type: 'scatter',
+    type: "scatter",
     data: { datasets: [{ data: dataPoints, pointRadius: 5 }] },
     options: {
       responsive: true,
       maintainAspectRatio: false,
       scales: {
         x: {
-          title: { display: true, text: 'Probability' },
-          min: 1, max: 5, ticks: { stepSize: 1 }, grid: { color: '#eee' }
+          title: { display: true, text: "Probability" },
+          min: 1, max: 5, ticks: { stepSize: 1 }, grid: { color: "#eee" }
         },
         y: {
-          title: { display: true, text: 'Impact' },
-          min: 1, max: 5, ticks: { stepSize: 1 }, grid: { color: '#eee' }
+          title: { display: true, text: "Impact" },
+          min: 1, max: 5, ticks: { stepSize: 1 }, grid: { color: "#eee" }
         }
       },
+      plugins: { legend: { display: false } }
+    }
+  };
+
+  const ctx = document.getElementById("riskMatrix").getContext("2d");
+  if (matrixChart) {
+    matrixChart.data.datasets[0].data = dataPoints;
+    matrixChart.update();
+  } else {
+    matrixChart = new Chart(ctx, cfg);
+  }
+}

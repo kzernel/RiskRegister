@@ -14,6 +14,12 @@ document.getElementById("riskForm").addEventListener("submit", function(e) {
   localStorage.setItem("risks", JSON.stringify(risks));
 
   renderTable();
+  document.getElementById("clearRisks").addEventListener("click", function() {
+  if (confirm("Are you sure you want to delete all risks?")) {
+    localStorage.removeItem("risks");
+    renderTable();
+  }
+});
   this.reset();
 });
 
@@ -25,13 +31,23 @@ function renderTable() {
   risks
     .sort((a, b) => b.score - a.score)
     .forEach(risk => {
-      const row = `<tr>
-        <td>${risk.title}</td>
-        <td>${risk.description}</td>
-        <td>${risk.probability}</td>
-        <td>${risk.impact}</td>
-        <td>${risk.score}</td>
-      </tr>`;
+      let riskLevel = "";
+if (risk.score >= 15) {
+  riskLevel = "high";
+} else if (risk.score >= 6) {
+  riskLevel = "medium";
+} else {
+  riskLevel = "low";
+}
+
+const row = `<tr class="${riskLevel}">
+  <td>${risk.title}</td>
+  <td>${risk.description}</td>
+  <td>${risk.probability}</td>
+  <td>${risk.impact}</td>
+  <td>${risk.score}</td>
+</tr>`;
+
       table.innerHTML += row;
     });
 }

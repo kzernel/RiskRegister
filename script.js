@@ -1,3 +1,21 @@
+// ─── Firebase Initialization ────────────────────────────────────────────────
+const firebaseConfig = {
+  apiKey: "AIzaSyCI_brM58_psBt8IpYQlDCJ0u2pZO1EtAE",
+  authDomain: "risk-register-63ef2.firebaseapp.com",
+  projectId: "risk-register-63ef2",
+  storageBucket: "risk-register-63ef2.appspot.com",
+  messagingSenderId: "189252582282",
+  appId: "1:189252582282:web:14f2dc7b79da2dbd0fa673",
+  measurementId: "G-LY31GS5RKV"
+};
+firebase.initializeApp(firebaseConfig);
+
+// grab auth & firestore from the compat SDK
+const auth = firebase.auth();
+const db   = firebase.firestore();
+// ─────────────────────────────────────────────────────────────────────────────
+
+
 // Grab elements
 const form = document.getElementById("riskForm");
 const tableBody = document.getElementById("riskTable");

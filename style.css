@@ -1,9 +1,15 @@
+/*────────────────────────────────────────────────────────────────*/
+/* Base Styles                                                   */
+/*────────────────────────────────────────────────────────────────*/
 body {
   font-family: sans-serif;
   padding: 20px;
   background: #f9f9f9;
 }
 
+/*────────────────────────────────────────────────────────────────*/
+/* Form & Input Styling                                          */
+/*────────────────────────────────────────────────────────────────*/
 form {
   margin-bottom: 20px;
 }
@@ -14,13 +20,16 @@ input {
 }
 
 #clearRisks,
-#exportCSV {
+#exportCSV,
+button[type="submit"] {
   margin-bottom: 20px;
   padding: 6px 12px;
   cursor: pointer;
 }
 
-/* Color‐coded rows */
+/*────────────────────────────────────────────────────────────────*/
+/* Color‐Coded Rows                                              */
+/*────────────────────────────────────────────────────────────────*/
 tr.low {
   background-color: #d4edda; /* light green */
 }
@@ -31,58 +40,69 @@ tr.high {
   background-color: #f8d7da; /* light red */
 }
 
-/* ── Constrain the Risk Matrix size ──────────────────────────────────── */
-#riskMatrix {
-  display: block;           /* block so margin auto centers */
-  width: 300px;             /* fixed display width */
-  height: 300px;            /* fixed display height */
-  margin: 0 auto 20px;      /* center + bottom spacing */
-}
-/* ───────────────────────────────────────────────────────────────────── */
-
-/* ─── Make the chart-container a square for 5x5 Risk Matrix ────────────────────────────── */
+/*────────────────────────────────────────────────────────────────*/
+/* Chart Container: Perfect Square & Responsive                 */
+/*────────────────────────────────────────────────────────────────*/
 .chart-container {
-  width: 300px;          /* fixed width */
-  height: 300px;         /* same fixed height = perfect square */
-  margin: 0 auto 20px;   /* center + spacing */
-  position: relative;    /* for Chart.js responsive sizing */
+  width: 100%;
+  max-width: 300px;         /* cap to 300px on large screens */
+  aspect-ratio: 1 / 1;      /* always a square */
+  margin: 0 auto 20px;      /* center + spacing */
+  position: relative;
 }
 
 .chart-container canvas {
-  /* fill the container completely */
+  /* fill the container exactly */
   position: absolute;
   top: 0; left: 0;
   width: 100% !important;
   height: 100% !important;
 }
-/* ───────────────────────────────────────────────────────────────────────── */
 
-
-/* ── Scoped Table Styling for .table-container ───────────────────────── */
+/*────────────────────────────────────────────────────────────────*/
+/* Scoped Table Styling                                          */
+/*────────────────────────────────────────────────────────────────*/
 .table-container {
-  max-width: 800px;        /* cap the table width */
-  margin: 20px auto;       /* center it with vertical space */
+  max-width: 800px;         /* cap the table width */
+  margin: 20px auto;        /* center + vertical spacing */
+  overflow-x: auto;         /* allow horizontal scroll on tiny screens */
+  border-radius: 4px;       /* rounded corners */
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1); /* soft shadow */
 }
 
 .table-container table {
-  width: 100%;             /* fill its container */
-  table-layout: fixed;     /* fixed column widths */
+  width: 100%;              /* fill the container */
+  table-layout: fixed;      /* enforce column widths */
   border-collapse: collapse;
 }
 
+/*────────────────────────────────────────────────────────────────*/
+/* Table Cell Styling                                            */
+/*────────────────────────────────────────────────────────────────*/
 .table-container th,
 .table-container td {
-  padding: 6px 8px;        /* tighter cells */
-  font-size: 14px;         /* slightly smaller text */
+  padding: 6px 8px;         /* tighter cells */
+  font-size: 14px;          /* slightly smaller text */
   border: 1px solid #ccc;
-  overflow-wrap: break-word;
+  overflow-wrap: break-word;/* wrap long text */
 }
 
-.table-container th {
+/* Sticky header so column titles stay visible on scroll */
+.table-container thead th {
+  position: sticky;
+  top: 0;
   background-color: #eee;
+  z-index: 1;
 }
 
-/* Optional: explicit column widths */
+/* Hover highlight for better readability */
+.table-container tbody tr:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+/*────────────────────────────────────────────────────────────────*/
+/* Column Widths                                                 */
+/*────────────────────────────────────────────────────────────────*/
 .table-container th:nth-child(1),
 .table-container td:nth-child(1) { width: 20%; }  /* Title */
 .table-container th:nth-child(2),
@@ -93,4 +113,4 @@ tr.high {
 .table-container td:nth-child(4) { width: 15%; }  /* Impact */
 .table-container th:nth-child(5),
 .table-container td:nth-child(5) { width: 10%; }  /* Score */
-/* ───────────────────────────────────────────────────────────────────── */
+/*────────────────────────────────────────────────────────────────*/

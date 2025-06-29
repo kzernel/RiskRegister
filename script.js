@@ -98,9 +98,7 @@ form.addEventListener("submit", async e => {
 // ─── 6) Render Table & Update Chart ────────────────────────────────────────────
 async function renderTable() {
   // 1) Fetch & build full list
-  const snapshot = await userRisksRef()
-    .orderBy("score", "desc")
-    .get();
+  const snapshot = await userRisksRef().orderBy("score", "desc").get();
   currentRisks = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
   // 2) Apply generic filter (if filterTerm is non-empty)

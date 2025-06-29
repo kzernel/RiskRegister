@@ -1,5 +1,11 @@
+// ────────────────────────────────────────────────────────────────────────────────
+// script.js: Multi‐User Risk Register with Filter & 5×5 Scatter Plot
+// ────────────────────────────────────────────────────────────────────────────────
+
 console.log("🔧 script.js loaded");
 let matrixChart = null;
+let currentRisks = [];    // full list from Firestore
+let filterTerm = "";      // current filter
 
 // ─── 1) Firebase Initialization ────────────────────────────────────────────────
 const firebaseConfig = {
@@ -24,12 +30,18 @@ const signUpBtn     = document.getElementById("signUpBtn");
 const signInBtn     = document.getElementById("signInBtn");
 const signOutBtn    = document.getElementById("signOutBtn");
 const form          = document.getElementById("riskForm");
+const filterInput   = document.getElementById("filterInput");
 const tableBody     = document.getElementById("riskTable");
 const clearBtn      = document.getElementById("clearRisks");
 const exportBtn     = document.getElementById("exportCSV");
-let currentRisks    = [];
 
-// ─── 3) Auth Flow ──────────────────────────────────────────────────────────────
+// Wire up filter input
+filterInput.addEventListener("input", e => {
+  filterTerm = e.target.value.trim().toLowerCase();
+  renderTable();
+});
+
+// ─── 3) Authentication Flow ───────────────────────────────────────────────────
 auth.onAuthStateChanged(user => {
   if (user) {
     authContainer.style.display = "none";
@@ -41,16 +53,19 @@ auth.onAuthStateChanged(user => {
   }
 });
 
+// Sign Up
 signUpBtn.addEventListener("click", () => {
   auth.createUserWithEmailAndPassword(emailInput.value, passInput.value)
       .catch(e => alert("Sign-Up Error: " + e.message));
 });
 
+// Sign In
 signInBtn.addEventListener("click", () => {
   auth.signInWithEmailAndPassword(emailInput.value, passInput.value)
       .catch(e => alert("Sign-In Error: " + e.message));
 });
 
+// Sign Out
 signOutBtn.addEventListener("click", () => auth.signOut());
 
 // ─── 4) Firestore Helper ──────────────────────────────────────────────────────
@@ -65,13 +80,13 @@ form.addEventListener("submit", async e => {
   e.preventDefault();
   const title       = document.getElementById("title").value.trim();
   const description = document.getElementById("description").value.trim();
-  const prob        = parseInt(document.getElementById("probability").value, 10);
-  const impact      = parseInt(document.getElementById("impact").value, 10);
+  const prob        = parseInt(document.getElementById("probability").value,  10);
+  const impact      = parseInt(document.getElementById("impact").value,       10);
 
   if (!title || !description || isNaN(prob) || isNaN(impact)) {
     return alert("All fields are required, and Probability/Impact must be numbers.");
   }
-  const score       = prob * impact;
+  const score = prob * impact;
 
   await userRisksRef().add({ title, description, probability: prob, impact, score });
   form.reset();
@@ -80,14 +95,20 @@ form.addEventListener("submit", async e => {
 
 // ─── 6) Render Table & Update Chart ────────────────────────────────────────────
 async function renderTable() {
+  // Fetch & build full list
   const snapshot = await userRisksRef().orderBy("score", "desc").get();
+  currentRisks = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+  // Apply generic filter across all properties
+  const displayed = currentRisks.filter(risk =>
+    Object.values(risk).some(val =>
+      String(val).toLowerCase().includes(filterTerm)
+    )
+  );
+
+  // Render rows
   tableBody.innerHTML = "";
-  currentRisks = [];
-
-  snapshot.forEach(doc => {
-    const risk = { id: doc.id, ...doc.data() };
-    currentRisks.push(risk);
-
+  displayed.forEach(risk => {
     const cls = (risk.score >= 15) ? "high"
               : (risk.score >= 6)  ? "medium"
               :                       "low";
@@ -104,8 +125,8 @@ async function renderTable() {
     tableBody.appendChild(tr);
   });
 
-  // ← redraw the 5×5 scatter plot
-  updateMatrixChart();
+  // Redraw the risk matrix with filtered data
+  updateMatrixChart(displayed);
 }
 
 // ─── 7) Clear All Risks ───────────────────────────────────────────────────────
@@ -136,8 +157,8 @@ exportBtn.addEventListener("click", () => {
 });
 
 // ─── 9) 5×5 Risk Matrix Scatter Plot Helper ──────────────────────────────────
-function updateMatrixChart() {
-  const dataPoints = currentRisks.map(risk => {
+function updateMatrixChart(risksToPlot = currentRisks) {
+  const dataPoints = risksToPlot.map(risk => {
     let color;
     if (risk.score >= 15)      color = 'rgba(220,53,69,0.8)';
     else if (risk.score >= 6)  color = 'rgba(255,193,7,0.8)';
@@ -147,15 +168,21 @@ function updateMatrixChart() {
 
   const cfg = {
     type: 'scatter',
-    data: { datasets: [{ data: dataPoints, pointRadius: 8 }] },
+    data: { datasets: [{ data: dataPoints, pointRadius: 5 }] },
     options: {
-      responsive: true,            // ← enable responsive mode
-      maintainAspectRatio: false,  // ← fill the container’s exact shape
+      responsive: true,
+      maintainAspectRatio: false,
       scales: {
-        x: { title: { display: true, text: 'Probability' }, min:1, max:5, ticks:{stepSize:1}, grid:{color:'#eee'} },
-        y: { title: { display: true, text: 'Impact'      }, min:1, max:5, ticks:{stepSize:1}, grid:{color:'#eee'} }
+        x: {
+          title: { display: true, text: 'Probability' },
+          min: 1, max: 5, ticks: { stepSize: 1 }, grid: { color: '#eee' }
+        },
+        y: {
+          title: { display: true, text: 'Impact' },
+          min: 1, max: 5, ticks: { stepSize: 1 }, grid: { color: '#eee' }
+        }
       },
-      plugins: { legend:{ display:false } }
+      plugins: { legend: { display: false } }
     }
   };
 

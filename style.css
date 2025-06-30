@@ -113,4 +113,12 @@ tr.high {
 .table-container td:nth-child(4) { width: 15%; }  /* Impact */
 .table-container th:nth-child(5),
 .table-container td:nth-child(5) { width: 10%; }  /* Score */
+.table-container th:nth-child(6),
+.table-container td:nth-child(6) { width: 12%; } /* Date Identified */
+.table-container th:nth-child(7),
+.table-container td:nth-child(7) { width: 12%; } /* Date Mitigated */
+.table-container th:nth-child(8),
+.table-container td:nth-child(8) { width: 20%; } /* Comments */
+.table-container th:nth-child(9),
+.table-container td:nth-child(9) { width: 10%; } /* Status */
 /*────────────────────────────────────────────────────────────────*/

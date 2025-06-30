@@ -4,7 +4,7 @@
 
 console.log("🔧 script.js loaded");
 
-// ─── Gradient Heatmap Plugin ──────────────────────────────────────────────────
+// ─── Gradient Heatmap Plugin (softer colors) ─────────────────────────────────
 const gradientHeatmapPlugin = {
   id: 'gradientHeatmapPlugin',
   beforeDatasetsDraw(chart) {
@@ -15,22 +15,18 @@ const gradientHeatmapPlugin = {
 
     const cellW = (right - left) / 5;
     const cellH = (bottom - top) / 5;
-    const minScore = 1;
-    const maxScore = 25;
+    const minScore = 1, maxScore = 25;
 
     for (let i = 0; i < 5; i++) {
       for (let j = 0; j < 5; j++) {
-        // compute score for this cell
         const prob  = i + 1;
         const imp   = 5 - j;
         const score = prob * imp;
+        const t     = (score - minScore) / (maxScore - minScore);
+        const hue   = (1 - t) * 120;  // 120°→0°
 
-        // normalize 0 → 1
-        const t = (score - minScore) / (maxScore - minScore);
-
-        // map t=0 → green (120°), t=0.5 → yellow (60°), t=1 → red (0°)
-        const hue = (1 - t) * 120;  // 120→0 as t goes 0→1
-        ctx.fillStyle = `hsl(${hue}, 100%, 60%)`;
+        // Softer palette: 80% saturation, 70% lightness
+        ctx.fillStyle = `hsl(${hue}, 80%, 70%)`;
 
         ctx.fillRect(
           left + i * cellW,

@@ -31,13 +31,34 @@
     <button id="signOutBtn">Sign Out</button>
 
     <!-- Add a new risk -->
-    <form id="riskForm">
-      <input type="text"  id="title"       placeholder="Risk Title"       required>
-      <input type="text"  id="description" placeholder="Risk Description" required>
-      <label>Probability: <input type="number" id="probability" min="1" max="5" required></label>
-      <label>Impact:      <input type="number" id="impact"      min="1" max="5" required></label>
-      <button type="submit">Add Risk</button>
-    </form>
+   <form id="riskForm">
+  <input type="text" id="title" placeholder="Risk Title" required>
+  <input type="text" id="description" placeholder="Risk Description" required>
+
+  <label>Probability: <input type="number" id="probability" min="1" max="5" required></label>
+  <label>Impact:      <input type="number" id="impact"      min="1" max="5" required></label>
+
+  <label>Date Identified:
+    <input type="date" id="dateIdentified" required>
+  </label>
+  <label>Date Mitigated:
+    <input type="date" id="dateMitigated">
+  </label>
+
+  <label>Comments:
+    <input type="text" id="comments" placeholder="Optional notes…">
+  </label>
+
+  <label>Status:
+    <select id="status">
+      <option value="open">Open</option>
+      <option value="pending">Pending</option>
+      <option value="resolved">Resolved</option>
+    </select>
+  </label>
+
+  <button type="submit">Add Risk</button>
+</form>
 
     <!-- Clear & Export -->
     <button id="clearRisks">Clear All Risks</button>

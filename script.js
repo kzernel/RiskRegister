@@ -170,52 +170,72 @@ await userRisksRef().add({
 
 // ─── Render Table & Update Chart ───────────────────────────────────────────────
 async function renderTable() {
-  const snap = await userRisksRef().orderBy("score", "desc").get();
-  currentRisks = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  // … your fetch + filtering logic …
 
-  // Build filtered array
-  const filtered = currentRisks.filter(function(risk) {
-    const textOK = !textFilter ||
-      Object.values(risk).some(v =>
-        String(v).toLowerCase().includes(textFilter)
-      );
+  tableBody.innerHTML = ""; 
+  filtered.forEach(risk => {
+    // decide row class
+    const cls = risk.score >= 15 ? "high"
+              : risk.score >=  6 ? "medium"
+              :                      "low";
 
-    const sev = (risk.score >= 15) ? "high"
-              : (risk.score >=  6) ? "medium"
-              :                       "low";
-    const severityOK = !severityFilter || sev === severityFilter;
+    const tr = document.createElement("tr");
+    tr.classList.add(cls);
 
-    const probOK   = !probFilter   || String(risk.probability) === probFilter;
-    const impactOK = !impactFilter || String(risk.impact)      === impactFilter;
+    // give each cell a data-field & contenteditable
+    tr.innerHTML = `
+      <td data-field="title"       contenteditable>${risk.title}</td>
+      <td data-field="description" contenteditable>${risk.description}</td>
+      <td data-field="probability" contenteditable>${risk.probability}</td>
+      <td data-field="impact"      contenteditable>${risk.impact}</td>
+      <td>${risk.score}</td>                        <!-- score is computed -->
+      <td data-field="dateIdentified" contenteditable>${risk.dateIdentified||""}</td>
+      <td data-field="dateMitigated"   contenteditable>${risk.dateMitigated||""}</td>
+      <td data-field="comments"        contenteditable>${risk.comments||""}</td>
+      <td data-field="status"          contenteditable>${risk.status||""}</td>
+    `;
 
-    return textOK && severityOK && probOK && impactOK;
+    // when any cell loses focus, push update
+    tr.querySelectorAll("[contenteditable]").forEach(cell => {
+      cell.addEventListener("blur", async e => {
+        const field = e.target.dataset.field;
+        let newVal = e.target.innerText.trim();
+
+        // parse numbers for probability/impact
+        if (field === "probability" || field === "impact") {
+          newVal = parseInt(newVal, 10);
+          if (isNaN(newVal) || newVal < 1 || newVal > 5) {
+            return alert("Probability & Impact must be a number 1–5");
+          }
+        }
+
+        // update Firestore
+        const docRef = userRisksRef().doc(risk.id);
+        // recompute score if needed
+        let updateObj = { [field]: newVal };
+        if (field === "probability" || field === "impact") {
+          const otherField = field === "probability" ? "impact" : "probability";
+          const otherVal   = risk[otherField];
+          updateObj.score  = (field==="probability" ? newVal : otherVal)
+                           * (field==="impact"      ? newVal : otherVal);
+        }
+
+        try {
+          await docRef.update(updateObj);
+          renderTable();   // re-render so score & coloring stay in sync
+        } catch(err) {
+          console.error("Update failed:", err);
+          alert("Could not save change.");
+        }
+      });
+    });
+
+    tableBody.appendChild(tr);
   });
 
-  console.log(`📊 renderTable: showing ${filtered.length}/${currentRisks.length} risks`);
+  updateMatrixChart(filtered);
+}
 
-  tableBody.innerHTML = "";
- filtered.forEach(function(risk) {
-  const cls = (risk.score >= 15) ? "high"
-            : (risk.score >=  6) ? "medium"
-            :                       "low";
-  const tr = document.createElement("tr");
-  tr.classList.add(cls);
-
-  // Single template literal assignment:
-  tr.innerHTML = `
-    <td>${risk.title}</td>
-    <td>${risk.description}</td>
-    <td>${risk.probability}</td>
-    <td>${risk.impact}</td>
-    <td>${risk.score}</td>
-    <td>${risk.dateIdentified || ""}</td>
-    <td>${risk.dateMitigated   || ""}</td>
-    <td>${risk.comments         || ""}</td>
-    <td>${risk.status}</td>
-  `;
-
-  tableBody.appendChild(tr);
-});
 
   updateMatrixChart(filtered);
 }

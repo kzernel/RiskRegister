@@ -1,20 +1,20 @@
-/*──────────────────────────────────────────────────────────────────────*/
+/*────────────────────────────────────────────────────────────────────*/
 /* Base Styles                                                         */
-/*──────────────────────────────────────────────────────────────────────*/
+/*────────────────────────────────────────────────────────────────────*/
 body {
   font-family: sans-serif;
   padding: 20px;
   background: #f9f9f9;
 }
 
-/*──────────────────────────────────────────────────────────────────────*/
+/*────────────────────────────────────────────────────────────────────*/
 /* Form & Button Styling                                               */
-/*──────────────────────────────────────────────────────────────────────*/
+/*────────────────────────────────────────────────────────────────────*/
 form {
   margin-bottom: 20px;
 }
 
-input {
+input, select {
   margin-right: 10px;
   padding: 5px;
 }
@@ -35,19 +35,19 @@ button[type="submit"]:hover {
   background-color: #f0f0f0;
 }
 
-/*──────────────────────────────────────────────────────────────────────*/
+/*────────────────────────────────────────────────────────────────────*/
 /* Color-Coded Rows                                                    */
-/*──────────────────────────────────────────────────────────────────────*/
+/*────────────────────────────────────────────────────────────────────*/
 tr.low    { background-color: #d4edda; } /* light green */
 tr.medium { background-color: #fff3cd; } /* light yellow */
 tr.high   { background-color: #f8d7da; } /* light red */
 
-/*──────────────────────────────────────────────────────────────────────*/
+/*────────────────────────────────────────────────────────────────────*/
 /* Chart Container: Perfect Square & Responsive                        */
-/*──────────────────────────────────────────────────────────────────────*/
+/*────────────────────────────────────────────────────────────────────*/
 .chart-container {
-  width: 450px;             /* increased for readability */
-  height: 450px;            /* square aspect */
+  width: 450px;             /* Chart width */
+  height: 450px;            /* Chart height */
   margin: 0 auto 20px;
   position: relative;
 }
@@ -58,11 +58,11 @@ tr.high   { background-color: #f8d7da; } /* light red */
   height: 100% !important;
 }
 
-/*──────────────────────────────────────────────────────────────────────*/
-/* Table Container & General Table Styling                             */
-/*──────────────────────────────────────────────────────────────────────*/
+/*────────────────────────────────────────────────────────────────────*/
+/* Table Container & General Styling                                   */
+/*────────────────────────────────────────────────────────────────────*/
 .table-container {
-  max-width: 1000px;        /* room for 9 columns */
+  max-width: 1200px;        /* increased for 9+ columns */
   margin: 20px auto;
   overflow-x: auto;         /* horizontal scroll on small screens */
   border-radius: 4px;
@@ -96,13 +96,13 @@ tr.high   { background-color: #f8d7da; } /* light red */
   background-color: rgba(0, 0, 0, 0.05);
 }
 
-/*──────────────────────────────────────────────────────────────────────*/
-/* Column Widths (adjust comments to be widest, status narrowest)       */
-/*──────────────────────────────────────────────────────────────────────*/
+/*────────────────────────────────────────────────────────────────────*/
+/* Column Widths (adjusted Status & overall sizing)                   */
+/*────────────────────────────────────────────────────────────────────*/
 .table-container th:nth-child(1),
-.table-container td:nth-child(1) { width: 12%; }  /* Title */
+.table-container td:nth-child(1) { width: 10%; }  /* Title */
 .table-container th:nth-child(2),
-.table-container td:nth-child(2) { width: 18%; }  /* Description */
+.table-container td:nth-child(2) { width: 15%; }  /* Description */
 .table-container th:nth-child(3),
 .table-container td:nth-child(3) { width: 7%; }   /* Probability */
 .table-container th:nth-child(4),
@@ -116,5 +116,5 @@ tr.high   { background-color: #f8d7da; } /* light red */
 .table-container th:nth-child(8),
 .table-container td:nth-child(8) { width: 20%; }  /* Comments */
 .table-container th:nth-child(9),
-.table-container td:nth-child(9) { width: 5%; }   /* Status */
-/*──────────────────────────────────────────────────────────────────────*/
+.table-container td:nth-child(9) { width: 7%; }   /* Status */
+/*────────────────────────────────────────────────────────────────────*/

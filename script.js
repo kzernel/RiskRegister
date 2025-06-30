@@ -42,7 +42,6 @@ const gradientHeatmapPlugin = {
     }
   }
 };
-Chart.unregister(heatmapPlugin);
 Chart.register(gradientHeatmapPlugin);
 // ────────────────────────────────────────────────────────────────────────────────
 

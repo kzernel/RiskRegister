@@ -194,26 +194,28 @@ async function renderTable() {
   console.log(`📊 renderTable: showing ${filtered.length}/${currentRisks.length} risks`);
 
   tableBody.innerHTML = "";
-  filtered.forEach(function(risk) {
-    const cls = (risk.score >= 15) ? "high"
-              : (risk.score >=  6) ? "medium"
-              :                       "low";
-    const tr  = document.createElement("tr");
-    tr.classList.add(cls);
-    tr.innerHTML = `
-      tr.innerHTML = `
-  <td>${risk.title}</td>
-  <td>${risk.description}</td>
-  <td>${risk.probability}</td>
-  <td>${risk.impact}</td>
-  <td>${risk.score}</td>
-  <td>${risk.dateIdentified || ""}</td>
-  <td>${risk.dateMitigated   || ""}</td>
-  <td>${risk.comments         || ""}</td>
-  <td>${risk.status}</td>
-`;
-    tableBody.appendChild(tr);
-  });
+ filtered.forEach(function(risk) {
+  const cls = (risk.score >= 15) ? "high"
+            : (risk.score >=  6) ? "medium"
+            :                       "low";
+  const tr = document.createElement("tr");
+  tr.classList.add(cls);
+
+  // Single template literal assignment:
+  tr.innerHTML = `
+    <td>${risk.title}</td>
+    <td>${risk.description}</td>
+    <td>${risk.probability}</td>
+    <td>${risk.impact}</td>
+    <td>${risk.score}</td>
+    <td>${risk.dateIdentified || ""}</td>
+    <td>${risk.dateMitigated   || ""}</td>
+    <td>${risk.comments         || ""}</td>
+    <td>${risk.status}</td>
+  `;
+
+  tableBody.appendChild(tr);
+});
 
   updateMatrixChart(filtered);
 }

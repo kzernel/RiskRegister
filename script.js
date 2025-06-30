@@ -76,6 +76,10 @@ const textInput       = document.getElementById("filterInput");
 const severitySelect  = document.getElementById("severityFilter");
 const probSelect      = document.getElementById("probFilter");
 const impactSelect    = document.getElementById("impactFilter");
+const dateIdInput      = document.getElementById("dateIdentified");
+const dateMitInput     = document.getElementById("dateMitigated");
+const commentsInput    = document.getElementById("comments");
+const statusSelect     = document.getElementById("status");
 const tableBody       = document.getElementById("riskTable");
 const clearBtn        = document.getElementById("clearRisks");
 const exportBtn       = document.getElementById("exportCSV");
@@ -139,18 +143,27 @@ function userRisksRef() {
 // ─── Add Risk Handler ─────────────────────────────────────────────────────────
 form.addEventListener("submit", async function(e) {
   e.preventDefault();
-  const title       = document.getElementById("title").value.trim();
-  const description = document.getElementById("description").value.trim();
-  const prob        = parseInt(document.getElementById("probability").value, 10);
-  const impact      = parseInt(document.getElementById("impact").value,      10);
+  const title            = document.getElementById("title").value.trim();
+const description      = document.getElementById("description").value.trim();
+const prob             = parseInt(document.getElementById("probability").value, 10);
+const impact           = parseInt(document.getElementById("impact").value,      10);
+const dateIdentified   = document.getElementById("dateIdentified").value;       // YYYY-MM-DD
+const dateMitigated    = document.getElementById("dateMitigated").value;        // may be empty
+const comments         = document.getElementById("comments").value.trim();
+const status           = document.getElementById("status").value;
+const score            = prob * impact;
 
-  if (!title || !description || isNaN(prob) || isNaN(impact)) {
-    alert("All fields are required and must be valid numbers");
-    return;
-  }
-
-  const score = prob * impact;
-  await userRisksRef().add({ title, description, probability: prob, impact, score });
+await userRisksRef().add({
+  title,
+  description,
+  probability: prob,
+  impact,
+  score,
+  dateIdentified,
+  dateMitigated: dateMitigated || null,
+  comments,
+  status
+});
   form.reset();
   renderTable();
 });
@@ -188,12 +201,17 @@ async function renderTable() {
     const tr  = document.createElement("tr");
     tr.classList.add(cls);
     tr.innerHTML = `
-      <td>${risk.title}</td>
-      <td>${risk.description}</td>
-      <td>${risk.probability}</td>
-      <td>${risk.impact}</td>
-      <td>${risk.score}</td>
-    `;
+      tr.innerHTML = `
+  <td>${risk.title}</td>
+  <td>${risk.description}</td>
+  <td>${risk.probability}</td>
+  <td>${risk.impact}</td>
+  <td>${risk.score}</td>
+  <td>${risk.dateIdentified || ""}</td>
+  <td>${risk.dateMitigated   || ""}</td>
+  <td>${risk.comments         || ""}</td>
+  <td>${risk.status}</td>
+`;
     tableBody.appendChild(tr);
   });
 
@@ -216,10 +234,22 @@ exportBtn.addEventListener("click", function() {
     alert("No risks to export");
     return;
   }
-  const header = ["Title","Description","Probability","Impact","Score"];
-  const rows   = currentRisks.map(r => [
-    r.title, r.description, r.probability, r.impact, r.score
-  ]);
+ const header = [
+  "Title","Description","Probability","Impact","Score",
+  "Date Identified","Date Mitigated","Comments","Status"
+];
+
+const rows = currentRisks.map(r => [
+  r.title,
+  r.description,
+  r.probability,
+  r.impact,
+  r.score,
+  r.dateIdentified  || "",
+  r.dateMitigated   || "",
+  r.comments        .replace(/,/g,";"),  // avoid CSV-breaking commas
+  r.status
+]);
   const csv = "data:text/csv;charset=utf-8," +
               [header, ...rows].map(r => r.join(",")).join("\n");
   const link = document.createElement("a");

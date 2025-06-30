@@ -1,15 +1,15 @@
-/*────────────────────────────────────────────────────────────────*/
-/* Base Styles                                                   */
-/*────────────────────────────────────────────────────────────────*/
+/*──────────────────────────────────────────────────────────────────────*/
+/* Base Styles                                                         */
+/*──────────────────────────────────────────────────────────────────────*/
 body {
   font-family: sans-serif;
   padding: 20px;
   background: #f9f9f9;
 }
 
-/*────────────────────────────────────────────────────────────────*/
-/* Form & Input Styling                                          */
-/*────────────────────────────────────────────────────────────────*/
+/*──────────────────────────────────────────────────────────────────────*/
+/* Form & Button Styling                                               */
+/*──────────────────────────────────────────────────────────────────────*/
 form {
   margin-bottom: 20px;
 }
@@ -25,31 +25,32 @@ button[type="submit"] {
   margin-bottom: 20px;
   padding: 6px 12px;
   cursor: pointer;
+  border: 1px solid #888;
+  background-color: #fafafa;
+  transition: background-color 0.2s;
+}
+#clearRisks:hover,
+#exportCSV:hover,
+button[type="submit"]:hover {
+  background-color: #f0f0f0;
 }
 
-/*────────────────────────────────────────────────────────────────*/
-/* Color‐Coded Rows                                              */
-/*────────────────────────────────────────────────────────────────*/
-tr.low {
-  background-color: #d4edda; /* light green */
-}
-tr.medium {
-  background-color: #fff3cd; /* light yellow */
-}
-tr.high {
-  background-color: #f8d7da; /* light red */
-}
+/*──────────────────────────────────────────────────────────────────────*/
+/* Color-Coded Rows                                                    */
+/*──────────────────────────────────────────────────────────────────────*/
+tr.low    { background-color: #d4edda; } /* light green */
+tr.medium { background-color: #fff3cd; } /* light yellow */
+tr.high   { background-color: #f8d7da; } /* light red */
 
-/*────────────────────────────────────────────────────────────────*/
-/* Chart Container: Perfect Square & Responsive                 */
-/*────────────────────────────────────────────────────────────────*/
+/*──────────────────────────────────────────────────────────────────────*/
+/* Chart Container: Perfect Square & Responsive                        */
+/*──────────────────────────────────────────────────────────────────────*/
 .chart-container {
-  width: 400px;         /* was 300px */
-  height: 400px;        /* was 300px */
+  width: 450px;             /* increased for readability */
+  height: 450px;            /* square aspect */
   margin: 0 auto 20px;
   position: relative;
 }
-
 .chart-container canvas {
   position: absolute;
   top: 0; left: 0;
@@ -57,32 +58,29 @@ tr.high {
   height: 100% !important;
 }
 
-/*────────────────────────────────────────────────────────────────*/
-/* Scoped Table Styling                                          */
-/*────────────────────────────────────────────────────────────────*/
+/*──────────────────────────────────────────────────────────────────────*/
+/* Table Container & General Table Styling                             */
+/*──────────────────────────────────────────────────────────────────────*/
 .table-container {
-  max-width: 800px;         /* cap the table width */
-  margin: 20px auto;        /* center + vertical spacing */
-  overflow-x: auto;         /* allow horizontal scroll on tiny screens */
-  border-radius: 4px;       /* rounded corners */
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1); /* soft shadow */
+  max-width: 1000px;        /* room for 9 columns */
+  margin: 20px auto;
+  overflow-x: auto;         /* horizontal scroll on small screens */
+  border-radius: 4px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
 }
 
 .table-container table {
-  width: 100%;              /* fill the container */
-  table-layout: fixed;      /* enforce column widths */
+  width: 100%;
+  table-layout: fixed;
   border-collapse: collapse;
 }
 
-/*────────────────────────────────────────────────────────────────*/
-/* Table Cell Styling                                            */
-/*────────────────────────────────────────────────────────────────*/
 .table-container th,
 .table-container td {
-  padding: 6px 8px;         /* tighter cells */
-  font-size: 14px;          /* slightly smaller text */
+  padding: 6px 8px;
+  font-size: 14px;
   border: 1px solid #ccc;
-  overflow-wrap: break-word;/* wrap long text */
+  overflow-wrap: break-word;
 }
 
 /* Sticky header so column titles stay visible on scroll */
@@ -98,25 +96,25 @@ tr.high {
   background-color: rgba(0, 0, 0, 0.05);
 }
 
-/*────────────────────────────────────────────────────────────────*/
-/* Column Widths                                                 */
-/*────────────────────────────────────────────────────────────────*/
+/*──────────────────────────────────────────────────────────────────────*/
+/* Column Widths (adjust comments to be widest, status narrowest)       */
+/*──────────────────────────────────────────────────────────────────────*/
 .table-container th:nth-child(1),
 .table-container td:nth-child(1) { width: 12%; }  /* Title */
 .table-container th:nth-child(2),
-.table-container td:nth-child(2) { width: 16%; }  /* Description */
+.table-container td:nth-child(2) { width: 18%; }  /* Description */
 .table-container th:nth-child(3),
-.table-container td:nth-child(3) { width: 8%; }   /* Probability */
+.table-container td:nth-child(3) { width: 7%; }   /* Probability */
 .table-container th:nth-child(4),
-.table-container td:nth-child(4) { width: 8%; }   /* Impact */
+.table-container td:nth-child(4) { width: 7%; }   /* Impact */
 .table-container th:nth-child(5),
-.table-container td:nth-child(5) { width: 8%; }   /* Score */
+.table-container td:nth-child(5) { width: 7%; }   /* Score */
 .table-container th:nth-child(6),
-.table-container td:nth-child(6) { width: 14%; }  /* Date Identified */
+.table-container td:nth-child(6) { width: 12%; }  /* Date Identified */
 .table-container th:nth-child(7),
-.table-container td:nth-child(7) { width: 14%; }  /* Date Mitigated */
+.table-container td:nth-child(7) { width: 12%; }  /* Date Mitigated */
 .table-container th:nth-child(8),
-.table-container td:nth-child(8) { width: 20%; }  /* Comments (largest) */
+.table-container td:nth-child(8) { width: 20%; }  /* Comments */
 .table-container th:nth-child(9),
-.table-container td:nth-child(9) { width: 6%; }   /* Status */
-/* ─────────────────────────────────────────────────────────────────────── */
+.table-container td:nth-child(9) { width: 5%; }   /* Status */
+/*──────────────────────────────────────────────────────────────────────*/

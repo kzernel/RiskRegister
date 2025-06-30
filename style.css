@@ -4,7 +4,7 @@
 body {
   font-family: sans-serif;
   padding: 20px;
-  background: #f9f9f9;
+  background: linear-gradient(180deg, #fafafa 0%, #e8edf2 100%);
 }
 
 /*────────────────────────────────────────────────────────────────────*/

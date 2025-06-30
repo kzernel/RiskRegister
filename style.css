@@ -44,15 +44,13 @@ tr.high {
 /* Chart Container: Perfect Square & Responsive                 */
 /*────────────────────────────────────────────────────────────────*/
 .chart-container {
-  width: 100%;
-  max-width: 300px;         /* cap to 300px on large screens */
-  aspect-ratio: 1 / 1;      /* always a square */
-  margin: 0 auto 20px;      /* center + spacing */
+  width: 400px;         /* was 300px */
+  height: 400px;        /* was 300px */
+  margin: 0 auto 20px;
   position: relative;
 }
 
 .chart-container canvas {
-  /* fill the container exactly */
   position: absolute;
   top: 0; left: 0;
   width: 100% !important;
@@ -104,21 +102,21 @@ tr.high {
 /* Column Widths                                                 */
 /*────────────────────────────────────────────────────────────────*/
 .table-container th:nth-child(1),
-.table-container td:nth-child(1) { width: 20%; }  /* Title */
+.table-container td:nth-child(1) { width: 12%; }  /* Title */
 .table-container th:nth-child(2),
-.table-container td:nth-child(2) { width: 40%; }  /* Description */
+.table-container td:nth-child(2) { width: 16%; }  /* Description */
 .table-container th:nth-child(3),
-.table-container td:nth-child(3) { width: 15%; }  /* Probability */
+.table-container td:nth-child(3) { width: 8%; }   /* Probability */
 .table-container th:nth-child(4),
-.table-container td:nth-child(4) { width: 15%; }  /* Impact */
+.table-container td:nth-child(4) { width: 8%; }   /* Impact */
 .table-container th:nth-child(5),
-.table-container td:nth-child(5) { width: 10%; }  /* Score */
+.table-container td:nth-child(5) { width: 8%; }   /* Score */
 .table-container th:nth-child(6),
-.table-container td:nth-child(6) { width: 12%; } /* Date Identified */
+.table-container td:nth-child(6) { width: 14%; }  /* Date Identified */
 .table-container th:nth-child(7),
-.table-container td:nth-child(7) { width: 12%; } /* Date Mitigated */
+.table-container td:nth-child(7) { width: 14%; }  /* Date Mitigated */
 .table-container th:nth-child(8),
-.table-container td:nth-child(8) { width: 20%; } /* Comments */
+.table-container td:nth-child(8) { width: 20%; }  /* Comments (largest) */
 .table-container th:nth-child(9),
-.table-container td:nth-child(9) { width: 10%; } /* Status */
-/*────────────────────────────────────────────────────────────────*/
+.table-container td:nth-child(9) { width: 6%; }   /* Status */
+/* ─────────────────────────────────────────────────────────────────────── */

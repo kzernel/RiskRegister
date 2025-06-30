@@ -168,64 +168,88 @@ await userRisksRef().add({
   renderTable();
 });
 
-// ─── Render Table & Update Chart ───────────────────────────────────────────────
+// ─── 6) Render Table & Update Chart (fully editable rows) ─────────────────
 async function renderTable() {
-  // … your fetch + filtering logic …
+  // 1) Fetch & build full list
+  const snap = await userRisksRef().orderBy("score", "desc").get();
+  currentRisks = snap.docs.map(d => ({ id: d.id, ...d.data() }));
 
-  tableBody.innerHTML = ""; 
+  // 2) Apply your existing filters (text, severity, prob, impact)
+  const filtered = currentRisks.filter(risk => {
+    // text
+    const textOK = !textFilter ||
+      Object.values(risk).some(v =>
+        String(v).toLowerCase().includes(textFilter)
+      );
+    // severity
+    const sev = (risk.score >= 15) ? "high"
+              : (risk.score >= 6)  ? "medium"
+              :                       "low";
+    const severityOK = !severityFilter || sev === severityFilter;
+    // probability
+    const probOK = !probFilter || String(risk.probability) === probFilter;
+    // impact
+    const impactOK = !impactFilter || String(risk.impact) === impactFilter;
+
+    return textOK && severityOK && probOK && impactOK;
+  });
+
+  console.log(`📊 renderTable: showing ${filtered.length}/${currentRisks.length} risks`);
+
+  // 3) Build the table rows — now with contenteditable cells
+  tableBody.innerHTML = "";
   filtered.forEach(risk => {
-    // decide row class
-    const cls = risk.score >= 15 ? "high"
-              : risk.score >=  6 ? "medium"
-              :                      "low";
+    const cls = (risk.score >= 15) ? "high"
+              : (risk.score >= 6)  ? "medium"
+              :                       "low";
 
     const tr = document.createElement("tr");
     tr.classList.add(cls);
 
-    // give each cell a data-field & contenteditable
     tr.innerHTML = `
       <td data-field="title"       contenteditable>${risk.title}</td>
       <td data-field="description" contenteditable>${risk.description}</td>
       <td data-field="probability" contenteditable>${risk.probability}</td>
       <td data-field="impact"      contenteditable>${risk.impact}</td>
-      <td>${risk.score}</td>                        <!-- score is computed -->
+      <td>${risk.score}</td>
       <td data-field="dateIdentified" contenteditable>${risk.dateIdentified||""}</td>
-      <td data-field="dateMitigated"   contenteditable>${risk.dateMitigated||""}</td>
-      <td data-field="comments"        contenteditable>${risk.comments||""}</td>
-      <td data-field="status"          contenteditable>${risk.status||""}</td>
+      <td data-field="dateMitigated"   contenteditable>${risk.dateMitigated  ||""}</td>
+      <td data-field="comments"        contenteditable>${risk.comments      ||""}</td>
+      <td data-field="status"          contenteditable>${risk.status        ||""}</td>
     `;
 
-    // when any cell loses focus, push update
+    // 4) Hook blur on each editable cell
     tr.querySelectorAll("[contenteditable]").forEach(cell => {
       cell.addEventListener("blur", async e => {
         const field = e.target.dataset.field;
-        let newVal = e.target.innerText.trim();
+        let newVal  = e.target.innerText.trim();
 
-        // parse numbers for probability/impact
+        // if they edited probability or impact, coerce to int & validate
         if (field === "probability" || field === "impact") {
           newVal = parseInt(newVal, 10);
           if (isNaN(newVal) || newVal < 1 || newVal > 5) {
-            return alert("Probability & Impact must be a number 1–5");
+            alert("Probability & Impact must be a number between 1 and 5");
+            return renderTable(); // revert
           }
         }
 
-        // update Firestore
-        const docRef = userRisksRef().doc(risk.id);
-        // recompute score if needed
-        let updateObj = { [field]: newVal };
+        // prepare update object
+        const updateObj = { [field]: newVal };
+
+        // if prob/impact changed, recompute score
         if (field === "probability" || field === "impact") {
-          const otherField = field === "probability" ? "impact" : "probability";
-          const otherVal   = risk[otherField];
-          updateObj.score  = (field==="probability" ? newVal : otherVal)
-                           * (field==="impact"      ? newVal : otherVal);
+          const other = field === "probability" ? "impact" : "probability";
+          const otherVal = risk[other];
+          updateObj.score = (field==="probability" ? newVal : otherVal)
+                          * (field==="impact"      ? newVal : otherVal);
         }
 
         try {
-          await docRef.update(updateObj);
-          renderTable();   // re-render so score & coloring stay in sync
-        } catch(err) {
-          console.error("Update failed:", err);
-          alert("Could not save change.");
+          await userRisksRef().doc(risk.id).update(updateObj);
+          renderTable();
+        } catch (err) {
+          console.error("Firestore update failed:", err);
+          alert("Save failed, please try again.");
         }
       });
     });
@@ -233,10 +257,7 @@ async function renderTable() {
     tableBody.appendChild(tr);
   });
 
-  updateMatrixChart(filtered);
-}
-
-
+  // 5) Finally redraw the chart with the filtered set
   updateMatrixChart(filtered);
 }
 

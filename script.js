@@ -262,7 +262,7 @@ function updateMatrixChart(risksToPlot = currentRisks) {
       },
       plugins: { legend: { display: false } }
     },
-    plugins: [ heatmapPlugin ]
+    plugins: [ gradientHeatmapPlugin ]
   };
 
   const ctx = document.getElementById("riskMatrix").getContext("2d");
